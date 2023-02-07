@@ -28,6 +28,7 @@
       <div class="form-group">
         <label for="result">Resultado</label>
         <input type="text" name="result" id="result" class="form-control" value="">
+        <input type="hidden" name="tipo_cuenta" id="tipo_cuenta" value="">
       </div>
 
       <?php date_default_timezone_set('America/Guayaquil');
@@ -63,7 +64,7 @@
         <label for="">
           <h6>Consumo</h6>
         </label>
-        <input class="form-control" type="number" name="consumo_lectura" id="consumo_lectura" readonly=»readonly»>
+        <input class="form-control" type="number" name="consumo_lectura" id="consumo_lectura" readonly=»readonly» onchange="javascript:pago_estimado();">
       </div>
       <div class="col-md-4">
         <label for="">
@@ -113,8 +114,56 @@
         try {
           var a = parseInt(document.f.lectura_actual_lectura.value),
             b = parseInt(document.f.lectura_anterior_lectura.value);
-          document.f.consumo_lectura.value = a - b;
+          var total = a - b;
+          if (total > 0) {
+            document.f.consumo_lectura.value = a - b;
+            pago_estimado()
+          } else {
+            document.f.consumo_lectura.value = 0;
+          }
+
         } catch (e) {}
+      }
+
+      function pago_estimado() {
+        var consumo_lectura = parseInt($("#consumo_lectura").val());
+        var tipo_cuenta = $("#tipo_cuenta").val();
+        var total_estimado = 0;
+
+        if (tipo_cuenta == "DOMESTICA") {
+          if (consumo_lectura <= 15) {
+            total_estimado = consumo_lectura * 0.15;
+          } else if (consumo_lectura >= 16 && consumo_lectura <= 30) {
+            total_estimado = consumo_lectura * 0.18;
+          } else if (consumo_lectura >= 31 && consumo_lectura <= 50) {
+            total_estimado = consumo_lectura * 0.23;
+          } else if (consumo_lectura > 50) {
+            total_estimado = consumo_lectura * 0.30;
+          }
+        } else if (tipo_cuenta == "COMERCIAL") {
+          if (consumo_lectura <= 15) {
+            total_estimado = consumo_lectura * 0.59;
+          } else if (consumo_lectura >= 16 && consumo_lectura <= 30) {
+            total_estimado = consumo_lectura * 0.69;
+          } else if (consumo_lectura >= 31 && consumo_lectura <= 50) {
+            total_estimado = consumo_lectura * 0.79;
+          } else if (consumo_lectura > 50) {
+            total_estimado = consumo_lectura * 0.88;
+          }
+        } else if (tipo_cuenta == "OFICIAL") {
+          if (consumo_lectura <= 15) {
+            total_estimado = consumo_lectura * 0.15;
+          } else if (consumo_lectura >= 16 && consumo_lectura <= 30) {
+            total_estimado = consumo_lectura * 0.18;
+          } else if (consumo_lectura >= 31 && consumo_lectura <= 50) {
+            total_estimado = consumo_lectura * 0.23;
+          } else if (consumo_lectura > 50) {
+            total_estimado = consumo_lectura * 0.30;
+          }
+        }
+        console.log(total_estimado);
+        total_estimado = Math.round(total_estimado * 100) / 100
+        $("#pago_lectura").val(total_estimado);
       }
     </script>
     <!--LLENAR FORMULARIO CON ELEMENTO SELECCIONADO POR SELECT-->
@@ -143,10 +192,12 @@
             url: "<?= base_url("index.php/lecturas/ultimaLecturaCuenta/") ?>" + id,
             success: function(data) {
               console.log(data);
-              if(data){
+              if (data) {
                 $("#lectura_anterior_lectura").val(data.lectura_actual_lectura)
-              }else{
+                $("#tipo_cuenta").val(data.nombre_tpcuenta)
+              } else {
                 $("#lectura_anterior_lectura").val('0')
+                $("#tipo_cuenta").val('')
               }
             }
           });

@@ -60,6 +60,7 @@ class Lectura extends CI_Model
   {
     $this->db->order_by("lectura_actual_lectura", "asc");
     $this->db->join('cuenta', 'cuenta.id_cuenta=lectura.fk_id_cuenta');
+    $this->db->join('tpcuenta', 'cuenta.fk_id_tpcuenta=tpcuenta.id_tpcuenta');
     $this->db->join('cliente', 'cliente.id_cliente=cuenta.fk_id_cliente');
     $this->db->where("lectura.fk_id_cuenta", $id_cuenta);
     $listadoLecturas = $this->db->get("lectura");
