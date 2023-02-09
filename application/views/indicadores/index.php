@@ -71,13 +71,30 @@ $totalUsuarios=$totalUsuariosActivos+$totalUsuariosInactivos;
 
 
  <!-- Sale & Revenue Start -->
+            <div class="modal fade" id="modal_usuarios" tabindex="-1" aria-labelledby="modal_usuariosLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="modal_usuariosLabel">Usuarios</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="carga_usuarios">
+                            
+                        </div>
+                        <div class="modal-footer">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
              <div class="container-fluid pt-4 px-4">
                <div class="d-flex align-items-center justify-content-between mb-4">
                    <h5 class="mb-0">Bienvenido a nuestro Sistema</h5>
                </div>
                  <div class="row g-3">
                      <div class="col-sm-6 col-xl-3">
-                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" type="button" onclick="javascript:abrir_modal()">
                              <i class="fa fa-users fa-3x text-primary"></i>
                              <div class="ms-3">
                                  <p class="mb-2">Usuarios</p>
@@ -86,7 +103,7 @@ $totalUsuarios=$totalUsuariosActivos+$totalUsuariosInactivos;
                          </div>
                      </div>
                      <div class="col-sm-6 col-xl-3">
-                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4" >
                              <i class="fa fa-users fa-3x text-primary"></i>
                              <div class="ms-3">
                                  <p class="mb-2">Clientes</p>
@@ -376,4 +393,16 @@ $totalUsuarios=$totalUsuariosActivos+$totalUsuariosInactivos;
                      </div>
                  </div>
              </div>
+
+             <script>
+                function abrir_modal() {
+                    $("#modal_usuarios").modal("show");
+                    $.ajax({
+                        url:"<?= base_url("index.php/indicadores/usuarios") ?>",
+                        success:function(data){
+                            $("#carga_usuarios").html(data)
+                        }
+                    });
+                }
+             </script>
             <!--  Chart End -->
