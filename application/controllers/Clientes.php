@@ -99,41 +99,43 @@ class Clientes extends CI_Controller
         $archivo = $this->simplexlsx1->generate($_FILES['matriz_clientes']['tmp_name']);
         $contador = 0;
         foreach ($archivo->rows() as $fields) {
-          $data_cliente['cedula_cliente'] = '';
-          $data_cliente['nombre_cliente'] = '';
-          $data_cliente['apellido_cliente'] = '';
-          $data_cliente['estado_cliente'] = 'ACTIVO';
-          $data_cliente['fecha_ingreso_cliente'] = date("Y-m-d");
-          $data_cuenta['numero_cuenta'] = trim($fields[1]);
-          $data_cuenta['direccion_primaria_cuenta'] = '';
-          $data_cuenta['direccion_secundaria_cuenta'] = '';
-          $data_cuenta['estado_cuenta'] = "ACTIVA";
-          $data_cuenta['fk_id_cliente'] = '';
-          $data_cuenta['fk_id_tpcuenta'] = 1;
-          $data_cuenta['fk_id_sector'] = 1;
-          if ($contador >= 1) {
-            $bandera = false;
-            if (!empty($fields[2])) {
-              $bandera = $this->cuenta->consultarCuentaRepetida($fields[2]);
+          if (!empty(trim($fields[0]))) {
+            $data_cliente['cedula_cliente'] = '';
+            $data_cliente['nombre_cliente'] = '';
+            $data_cliente['apellido_cliente'] = '';
+            $data_cliente['estado_cliente'] = 'ACTIVO';
+            $data_cliente['fecha_ingreso_cliente'] = date("Y-m-d");
+            $data_cuenta['numero_cuenta'] = trim($fields[1]);
+            $data_cuenta['direccion_primaria_cuenta'] = '';
+            $data_cuenta['direccion_secundaria_cuenta'] = '';
+            $data_cuenta['estado_cuenta'] = "ACTIVA";
+            $data_cuenta['fk_id_cliente'] = '';
+            $data_cuenta['fk_id_tpcuenta'] = 1;
+            $data_cuenta['fk_id_sector'] = 1;
+            if ($contador >= 1) {
+              $bandera = false;
+              if (!empty($fields[2])) {
+                $bandera = $this->cuenta->consultarCuentaRepetida($fields[2]);
+              }
+              //si $bandera es falso significa que no encontró clientes repetidos, entonces guarda el cliente
+              if (!$bandera) {
+                $data_cliente['cedula_cliente'] = trim($fields[2]);
+                $data_cliente['nombre_cliente'] = trim($fields[3]);
+                $data_cliente['apellido_cliente'] = trim($fields[4]);
+                $id = $this->cliente->insertarCargaMasiva($data_cliente);
+                $data_cuenta['numero_cuenta'] = trim($fields[1]);
+                $data_cuenta['numero_medidor_cuenta'] = trim($fields[7]);
+                $data_cuenta['direccion_primaria_cuenta'] = trim($fields[5]);
+                $data_cuenta['direccion_secundaria_cuenta'] = trim($fields[6]);
+                $data_cuenta['estado_cuenta'] = "ACTIVA";
+                $data_cuenta['fk_id_cliente'] = $id;
+                $data_cuenta['fk_id_tpcuenta'] = 1;
+                $data_cuenta['fk_id_sector'] = 1;
+                $this->cuenta->insertar($data_cuenta);
+              }
             }
-            //si $bandera es falso significa que no encontró clientes repetidos, entonces guarda el cliente
-            if (!$bandera) {
-              $data_cliente['cedula_cliente'] = trim($fields[2]);
-              $data_cliente['nombre_cliente'] = trim($fields[3]);
-              $data_cliente['apellido_cliente'] = trim($fields[4]);
-              $id = $this->cliente->insertarCargaMasiva($data_cliente);
-              $data_cuenta['numero_cuenta'] = trim($fields[1]);
-              $data_cuenta['numero_medidor_cuenta'] = trim($fields[7]);
-              $data_cuenta['direccion_primaria_cuenta'] = trim($fields[5]);
-              $data_cuenta['direccion_secundaria_cuenta'] = trim($fields[6]);
-              $data_cuenta['estado_cuenta'] = "ACTIVA";
-              $data_cuenta['fk_id_cliente'] = $id;
-              $data_cuenta['fk_id_tpcuenta'] = 1;
-              $data_cuenta['fk_id_sector'] = 1;
-              $this->cuenta->insertar($data_cuenta);
-            }
+            $contador++;
           }
-          $contador++;
         }
         echo "Datos Guardados";
       }

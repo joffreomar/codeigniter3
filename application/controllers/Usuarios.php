@@ -159,39 +159,41 @@ class Usuarios extends CI_Controller
         $archivo = $this->simplexlsx1->generate($_FILES['matriz_usuarios']['tmp_name']);
         $contador = 0;
         foreach ($archivo->rows() as $fields) {
-          $data_usuario['nombre_usuario'] = '';
-          $data_usuario['apellido_usuario'] = '';
-          $data_usuario['telefono_usuario'] = '';
-          $data_usuario['correo_usuario'] = '';
-          $data_usuario['password_usuario'] = '';
-          $data_usuario['descripcion_usuario'] = '';
-          $data_usuario['estado_usuario'] = "1";
-          $data_usuario['fecha_ingreso_usuario'] = date("Y-m-d");
-          $data_usuario['fecha_actualizacion_usuario'] = date("Y-m-d");
-          $data_usuario['tipo_usuario'] = '';
-          $data_usuario['fk_id_sector'] = 1;
-          if ($contador >= 1) {
-            $bandera = false;
-            if (!empty($fields[2])) {
-              $bandera = $this->usuario->consultarPorEmail($fields[4]);
+          if (!empty(trim($fields[0]))) {
+            $data_usuario['nombre_usuario'] = '';
+            $data_usuario['apellido_usuario'] = '';
+            $data_usuario['telefono_usuario'] = '';
+            $data_usuario['correo_usuario'] = '';
+            $data_usuario['password_usuario'] = '';
+            $data_usuario['descripcion_usuario'] = '';
+            $data_usuario['estado_usuario'] = "1";
+            $data_usuario['fecha_ingreso_usuario'] = date("Y-m-d");
+            $data_usuario['fecha_actualizacion_usuario'] = date("Y-m-d");
+            $data_usuario['tipo_usuario'] = '';
+            $data_usuario['fk_id_sector'] = 1;
+            if ($contador >= 1) {
+              $bandera = false;
+              if (!empty($fields[2])) {
+                $bandera = $this->usuario->consultarPorEmail($fields[4]);
+              }
+              //si $bandera es falso significa que no encontró clientes repetidos, entonces guarda el cliente
+              if (!$bandera) {
+                $data_usuario['nombre_usuario'] = trim($fields[1]);
+                $data_usuario['apellido_usuario'] = trim($fields[2]);
+                $data_usuario['telefono_usuario'] = trim($fields[3]);
+                $data_usuario['correo_usuario'] = trim($fields[4]);
+                $data_usuario['password_usuario'] = trim($fields[5]);
+                $data_usuario['descripcion_usuario'] = trim($fields[6]);
+                $data_usuario['estado_usuario'] = "1";
+                $data_usuario['fecha_ingreso_usuario'] = date("Y-m-d");
+                $data_usuario['fecha_actualizacion_usuario'] = date("Y-m-d");
+                $data_usuario['tipo_usuario'] = trim($fields[7]);
+                $data_usuario['fk_id_sector'] = 1;
+                $this->usuario->insertar($data_usuario);
+              }
             }
-            //si $bandera es falso significa que no encontró clientes repetidos, entonces guarda el cliente
-            if (!$bandera) {
-              $data_usuario['nombre_usuario'] = trim($fields[1]);
-              $data_usuario['apellido_usuario'] = trim($fields[2]);
-              $data_usuario['telefono_usuario'] = trim($fields[3]);
-              $data_usuario['correo_usuario'] = trim($fields[4]);
-              $data_usuario['password_usuario'] = trim($fields[5]);
-              $data_usuario['descripcion_usuario'] = trim($fields[6]);
-              $data_usuario['estado_usuario'] = "1";
-              $data_usuario['fecha_ingreso_usuario'] = date("Y-m-d");
-              $data_usuario['fecha_actualizacion_usuario'] = date("Y-m-d");
-              $data_usuario['tipo_usuario'] = trim($fields[7]);
-              $data_usuario['fk_id_sector'] = 1;
-              $this->usuario->insertar($data_usuario);
-            }
+            $contador++;
           }
-          $contador++;
         }
         echo "Datos Guardados";
       }

@@ -215,7 +215,7 @@ $totalUsuarios=$totalUsuariosActivos+$totalUsuariosInactivos;
              <!-- Chart Start -->
              <div class="container-fluid pt-4 px-4">
                  <div class="row g-4">
-                     <div class="col-sm-12 col-xl-6">
+                     <div class="col-sm-12 col-xl-6" type="button" onclick="javascript:abrir_modal()">
                          <div class="bg-light rounded h-100 p-4">
                              <h6 class="mb-4">Usuario por estado</h6>
                              <canvas id="chart1"></canvas>
