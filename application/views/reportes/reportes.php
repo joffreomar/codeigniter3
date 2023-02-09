@@ -106,18 +106,26 @@
                 <div class="col-12 row">
                     <div class="col-md-3">
                         <label for="fk_id_cuenta">Cliente</label>
-                        <select class="form-select" name="fk_id_cuenta" id="fk_id_cuenta">
-                            <option selected disabled value="">Seleccione el cliente</option>
-                            <?php if ($listadoCuentas) : ?>
-                                <?php foreach ($listadoCuentas->result() as $cuenta) : ?>
-                                    <option value="<?php echo $cuenta->id_cuenta; ?>">
-                                        <?php echo $cuenta->numero_medidor_cuenta; ?> -
-                                        <?php echo $cuenta->nombre_cliente; ?>
-                                        <?php echo $cuenta->apellido_cliente; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                        <div class="row">
+                            <div class="col-10">
+                                <select class="form-select" name="fk_id_cuenta" id="fk_id_cuenta">
+                                    <option value="null">-Seleccione-</option>
+                                    <?php if ($listadoCuentas) : ?>
+                                        <?php foreach ($listadoCuentas->result() as $cuenta) : ?>
+                                            <option value="<?php echo $cuenta->id_cuenta; ?>">
+                                                <?php echo $cuenta->numero_medidor_cuenta; ?> -
+                                                <?php echo $cuenta->nombre_cliente; ?>
+                                                <?php echo $cuenta->apellido_cliente; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+                            <div class="col-2 ">
+                                <a href="javascript:reset_select();"><i class="fas fa-times mt-2"></i></a>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
@@ -160,7 +168,8 @@
 <script type="text/javascript" src='https://code.jquery.com/jquery-3.5.1.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
-    $("#fk_id_cuenta").select2();
+    $("#fk_id_cuenta").select2({
+    });
 </script>
 <script type="text/javascript">
     $("#reporte_clientes_form").submit(function(e) {
@@ -209,5 +218,9 @@
                     features += ',left=' + myLeft + ',top=' + myTop;
                 }
         window.open(theURL, winName, features + ((features != '') ? ',' : '') + 'width=' + myWidth + ',height=' + myHeight);
+    }
+
+    function reset_select() {
+        $('#fk_id_cuenta').val("null").trigger('change');
     }
 </script>
