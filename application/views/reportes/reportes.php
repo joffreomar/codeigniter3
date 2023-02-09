@@ -104,7 +104,22 @@
         <div class="card-body">
             <form method="POST" id="reporte_lecturas_form">
                 <div class="col-12 row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label for="fk_id_cuenta">Cliente</label>
+                        <select class="form-select" name="fk_id_cuenta" id="fk_id_cuenta">
+                            <option selected disabled value="">Seleccione el cliente</option>
+                            <?php if ($listadoCuentas) : ?>
+                                <?php foreach ($listadoCuentas->result() as $cuenta) : ?>
+                                    <option value="<?php echo $cuenta->id_cuenta; ?>">
+                                        <?php echo $cuenta->numero_medidor_cuenta; ?> -
+                                        <?php echo $cuenta->nombre_cliente; ?>
+                                        <?php echo $cuenta->apellido_cliente; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="estado_lectura">Estado</label>
                             <select id="estado_lectura" class="form-control form-select" name="estado_lectura">
@@ -114,7 +129,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="tipo">Tipo de reporte</label><br>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -129,7 +144,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="row">
                             <div class="col-6">
                                 <button class="btn btn-success mt-4 col-12" type="submit">Generar</button>
@@ -143,6 +158,10 @@
     </div>
 </div>
 <script type="text/javascript" src='https://code.jquery.com/jquery-3.5.1.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script type="text/javascript">
+    $("#fk_id_cuenta").select2();
+</script>
 <script type="text/javascript">
     $("#reporte_clientes_form").submit(function(e) {
         e.preventDefault();
@@ -171,10 +190,12 @@
     $("#reporte_lecturas_form").submit(function(e) {
         e.preventDefault();
         var estado = "todos";
+        var fk_id_cuenta = "";
         if ($("#estado_lectura").val()) {
             estado = $("#estado_lectura").val()
         }
-        var parametros = estado + "/" + $('input:radio[name=tipo_lecturas]:checked').val();
+        fk_id_cuenta = $("#fk_id_cuenta").val();
+        var parametros = estado + "/" + $('input:radio[name=tipo_lecturas]:checked').val() + "/" + fk_id_cuenta;
         VentanaCentrada("<?= base_url("index.php/reportes/reportelecturas/") ?>" + parametros, 'reporte_de_lecturas', '', '1024', '768', 'true');
     });
 

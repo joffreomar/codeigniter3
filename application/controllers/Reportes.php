@@ -19,8 +19,9 @@ class Reportes extends CI_Controller
     }
     public function index()
     {
+        $data["listadoCuentas"] = $this->cuenta->consultarTodos();
         $this->load->view("administrador/header");
-        $this->load->view("reportes/reportes");
+        $this->load->view("reportes/reportes", $data);
         $this->load->view("administrador/footer");
     }
     public function reporteclientes($estado_cliente="", $posee_cuenta="", $tipo_reporte="")
@@ -505,10 +506,10 @@ class Reportes extends CI_Controller
 			exit;
 		}
     }
-    public function reportelecturas($estado_lectura="",  $tipo_reporte="")
+    public function reportelecturas($estado_lectura="",  $tipo_reporte="", $id_cuenta="")
     {
         if ($tipo_reporte=="excel") {
-            redirect("/reportes/reportelecturasexcel/$estado_lectura");
+            redirect("/reportes/reportelecturasexcel/$estado_lectura/$id_cuenta");
             exit(0);
         }
         $html= "<style>";
@@ -568,7 +569,7 @@ class Reportes extends CI_Controller
                     $html.='</tr>';
                 $html .= '</thead>';
                 $html .= '<tbody>';
-                $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura);
+                $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura, $id_cuenta);
                 if (is_countable($data) && count($data) > 0) {
                     foreach ($data as $d) {
                         $html .= '<tr>';
@@ -613,8 +614,8 @@ class Reportes extends CI_Controller
 		$filename = "Reporte en PDF";
 		$this->generarpdf($html,$filename);
     }
-    public function reportelecturasexcel($estado_lectura=""){
-        $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura);
+    public function reportelecturasexcel($estado_lectura="", $id_cuenta=""){
+        $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura, $id_cuenta);
 		if (is_countable($data) && count($data) > 0) {
 			$this->excel->setActiveSheetIndex(0);
 			$this->excel->getActiveSheet()->setTitle('facturas emititdas');
