@@ -70,6 +70,21 @@ class Lectura extends CI_Model
       return null; //cuando NO hay lecturas
     }
   }
+  public function consultarLecturasCuentaPorEstado($estado)
+  {
+    $this->db->join('cuenta', 'lectura.fk_id_cuenta=cuenta.id_cuenta', "LEFT");
+    $this->db->join('cliente', 'cuenta.fk_id_cliente=cliente.id_cliente', "LEFT");
+    if (trim($estado)!="todos") {
+      $this->db->where("lectura.estado_lectura", trim($estado));
+    }
+    $this->db->order_by("lectura.fecha_lectura", "desc");
+    $listadoLecturas = $this->db->get("lectura");
+    if ($listadoLecturas->num_rows() > 0) {
+      return $listadoLecturas->result(); //cuando SI hay lecturas
+    } else {
+      return null; //cuando NO hay lecturas
+    }
+  }
 
   public function eliminar($id_lectura)
   {

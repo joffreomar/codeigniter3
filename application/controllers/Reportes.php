@@ -6,6 +6,7 @@ class Reportes extends CI_Controller
         parent::__construct();
         $this->load->model("cliente");
         $this->load->model("cuenta");
+        $this->load->model("lectura");
         $this->load->library("Pdf");
         $this->load->library('excel');
         $this->load->helper('url');
@@ -385,7 +386,7 @@ class Reportes extends CI_Controller
                                 $html .= $d->id_cuenta;
                             $html .= '</td>';
                             $html .= '<td>';
-                                $html .= $d->nombre_cliente;
+                                $html .= $d->nombre_cliente. " ";
                                 $html .= $d->apellido_cliente;
                             $html .= '</td>';
                             $html .= '<td>';
@@ -496,6 +497,195 @@ class Reportes extends CI_Controller
 			$fecha = date("H:i:s");
 			$fecha = md5($fecha);
 			$archivo = "REPORTE_DE_CUENTAS_{$fecha}.xls";
+			$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
+			$objWriter->save($_SERVER['DOCUMENT_ROOT'] ."/epapap/reportes/" . $archivo . "");
+            redirect("../reportes/$archivo");
+		} else {
+			echo 'No se han encontrado registros';
+			exit;
+		}
+    }
+    public function reportelecturas($estado_lectura="",  $tipo_reporte="")
+    {
+        if ($tipo_reporte=="excel") {
+            redirect("/reportes/reportelecturasexcel/$estado_lectura");
+            exit(0);
+        }
+        $html= "<style>";
+        $html.= "body {";
+            $html .= "font-family: 'Heebo',sans-serif;";
+            $html.= "font-weight: 400;";
+            $html.= "color: #757575;";
+        $html.= "}";
+        $html.= "table {";
+            $html.= "font-family: 'Heebo',sans-serif;";
+            $html.= "font-size:9px;";
+            $html.= "font-weight: 400;";
+            $html.= "color: #757575;";
+        $html.= "}";
+        $html.= "table, th, td {";
+            $html.= "border-bottom: 1px solid #757575;";
+            $html.= "border-collapse: collapse;";
+        $html.= "}";
+        $html.= "</style>";
+        $html.='<div>';
+            $html.='<h4>';
+                $html.='REPORTE DE LECTURAS';
+            $html.='</h4>';
+            $html.='<table width="100%" ';
+                $html .= '<thead>';
+                    $html.='<tr >';
+                        $html.='<th>';
+                            $html.='NÚMERO DE MEDIDOR';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='CLIENTE';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='LECTURA ANTERIOR';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='LECTURA ACTUAL';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='FECHA DE LECTURA';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='CONSUMO';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='PAGO';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='OBSERVACIÓN';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='ESTADO';
+                        $html.='</th>';
+                        $html.='<th>';
+                            $html.='ENCARGADO LECTURA';
+                        $html.='</th>';
+                    $html.='</tr>';
+                $html .= '</thead>';
+                $html .= '<tbody>';
+                $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura);
+                if (is_countable($data) && count($data) > 0) {
+                    foreach ($data as $d) {
+                        $html .= '<tr>';
+                            $html .= '<td>';
+                                $html .= $d->numero_medidor_cuenta;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->nombre_cliente. " ";
+                                $html .= $d->apellido_cliente;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->lectura_anterior_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->lectura_actual_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->fecha_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->consumo_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->pago_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->observacion_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->estado_lectura;
+                            $html .= '</td>';
+                            $html .= '<td>';
+                                $html .= $d->encargado_lectura;
+                            $html .= '</td>';
+                        $html .= '</tr>';
+                    }
+                }
+                $html .= '</tbody>';
+            $html.='</table>';
+            
+        $html.='</div>';
+		$filename = "Reporte en PDF";
+		$this->generarpdf($html,$filename);
+    }
+    public function reportelecturasexcel($estado_lectura=""){
+        $data = $this->lectura->consultarLecturasCuentaPorEstado($estado_lectura);
+		if (is_countable($data) && count($data) > 0) {
+			$this->excel->setActiveSheetIndex(0);
+			$this->excel->getActiveSheet()->setTitle('facturas emititdas');
+			$contador = 1;
+			$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
+			$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
+			$this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+			$this->excel->getActiveSheet()->getStyle("A{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("B{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("C{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("D{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("E{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("F{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("G{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("H{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("I{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("J{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->setCellValue("A{$contador}", '');
+			$this->excel->getActiveSheet()->setCellValue("B{$contador}", '');
+			$this->excel->getActiveSheet()->setCellValue("C{$contador}", 'REPORTE DE LECTURAS');
+			$this->excel->getActiveSheet()->setCellValue("D{$contador}", '');
+			$this->excel->getActiveSheet()->setCellValue("E{$contador}", '');
+			$this->excel->getActiveSheet()->setCellValue("F{$contador}", '');
+			$contador++;
+			$this->excel->getActiveSheet()->getStyle("A{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("B{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("C{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("D{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("E{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("F{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("G{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("H{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("I{$contador}")->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle("J{$contador}")->getFont()->setBold(true);
+
+			$this->excel->getActiveSheet()->setCellValue("A{$contador}", 'NÚMERO DE MEDIDOR');
+			$this->excel->getActiveSheet()->setCellValue("B{$contador}", 'CLIENTE');
+			$this->excel->getActiveSheet()->setCellValue("C{$contador}", 'LECTURA ANTERIOR');
+			$this->excel->getActiveSheet()->setCellValue("D{$contador}", 'LECTURA ACTUAL');
+			$this->excel->getActiveSheet()->setCellValue("E{$contador}", 'FECHA DE LECTURA');
+			$this->excel->getActiveSheet()->setCellValue("F{$contador}", 'CONSUMO');
+			$this->excel->getActiveSheet()->setCellValue("G{$contador}", 'PAGO');
+			$this->excel->getActiveSheet()->setCellValue("H{$contador}", 'OBSERVACIÓN');
+			$this->excel->getActiveSheet()->setCellValue("I{$contador}", 'ESTADO');
+            $this->excel->getActiveSheet()->setCellValue("J{$contador}", 'ENCARGADO LECTURA');
+			//Definimos la data del cuerpo. 
+            $contador++;
+            foreach ($data as $d) {
+                $this->excel->getActiveSheet()->getStyle("A{$contador}")->getNumberFormat()->setFormatCode('#0');
+                $this->excel->getActiveSheet()->setCellValue("A{$contador}", $d->numero_medidor_cuenta);
+                $this->excel->getActiveSheet()->setCellValue("B{$contador}", $d->nombre_cliente." ".$d->apellido_cliente);
+                $this->excel->getActiveSheet()->setCellValue("C{$contador}", $d->lectura_anterior_lectura);
+                $this->excel->getActiveSheet()->setCellValue("D{$contador}", $d->lectura_actual_lectura);
+                $this->excel->getActiveSheet()->setCellValue("E{$contador}", $d->fecha_lectura);
+                $this->excel->getActiveSheet()->setCellValue("F{$contador}", $d->consumo_lectura);
+                $this->excel->getActiveSheet()->setCellValue("G{$contador}", $d->pago_lectura);
+                $this->excel->getActiveSheet()->setCellValue("H{$contador}", $d->observacion_lectura);
+                $this->excel->getActiveSheet()->setCellValue("I{$contador}", $d->estado_lectura);
+                $this->excel->getActiveSheet()->setCellValue("J{$contador}", $d->encargado_lectura);
+                $contador++;
+            }
+			$fecha = date("H:i:s");
+			$fecha = md5($fecha);
+			$archivo = "REPORTE_DE_LECTURAS_{$fecha}.xls";
 			$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 			$objWriter->save($_SERVER['DOCUMENT_ROOT'] ."/epapap/reportes/" . $archivo . "");
             redirect("../reportes/$archivo");

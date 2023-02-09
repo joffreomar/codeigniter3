@@ -97,6 +97,50 @@
             </form>
         </div>
     </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            Reporte de Lecturas
+        </div>
+        <div class="card-body">
+            <form method="POST" id="reporte_lecturas_form">
+                <div class="col-12 row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="estado_lectura">Estado</label>
+                            <select id="estado_lectura" class="form-control form-select" name="estado_lectura">
+                                <option value="">-Sleccione-</option>
+                                <option value="COMPLETADO">COMPLETADO</option>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tipo">Tipo de reporte</label><br>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="tipo_lecturas" value="excel" checked> Excel
+                                </label>
+                            </div>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="tipo_lecturas" value="pdf"> Pdf
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-success mt-4 col-12" type="submit">Generar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultados_cuenta"></div>
+            </form>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src='https://code.jquery.com/jquery-3.5.1.js'></script>
 <script type="text/javascript">
@@ -121,7 +165,17 @@
             estado = $("#estado_cuenta").val()
         }
         var parametros = estado + "/" + $('input:radio[name=tipo_cuentas]:checked').val();
-        VentanaCentrada("<?= base_url("index.php/reportes/reportecuentas/") ?>" + parametros, 'reporte_de_clientes', '', '1024', '768', 'true');
+        VentanaCentrada("<?= base_url("index.php/reportes/reportecuentas/") ?>" + parametros, 'reporte_de_cuentas', '', '1024', '768', 'true');
+    });
+
+    $("#reporte_lecturas_form").submit(function(e) {
+        e.preventDefault();
+        var estado = "todos";
+        if ($("#estado_lectura").val()) {
+            estado = $("#estado_lectura").val()
+        }
+        var parametros = estado + "/" + $('input:radio[name=tipo_lecturas]:checked').val();
+        VentanaCentrada("<?= base_url("index.php/reportes/reportelecturas/") ?>" + parametros, 'reporte_de_lecturas', '', '1024', '768', 'true');
     });
 
     function VentanaCentrada(theURL, winName, features, myWidth, myHeight, isCenter) { //v3.0
