@@ -105,6 +105,27 @@
     <h3>No se encontraron usuarios registrados</h3>
 </div>
 <?php endif; ?>
+<div class="container-fluid mt-3 text-start">
+  <div class="card">
+    <div class="card-header">
+      Carga Masiva de Usuarios
+    </div>
+    <div class="card-body">
+      <form method="post" id="carga_masiva" name="carga_masiva">
+        <div class="mt-2">
+          <label for="matriz_usuarios">Archivo excel de Usuarios</label>
+          <input id="matriz_usuarios" class="form-control-file" type="file" name="matriz_usuarios">
+        </div>
+        <div class="mt-2">
+          <input class="btn btn-success" type="submit" id="guardar_datos" value="Cargar">
+        </div>
+        <div id="resultados">
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
     function confirmarEliminacion(id_usuario){
@@ -181,7 +202,32 @@
           } );
 
 </script>
-
+<script>
+  $("#carga_masiva").submit(function(e) {
+    e.preventDefault();
+    $('#guardar_datos').attr("disabled", true);
+    var formData = new FormData($("#carga_masiva")[0]);
+    var parametros = $(this).serialize();
+    $.ajax({
+      type: "POST",
+      url: "<?= base_url("index.php/usuarios/cargamasiva") ?>",
+      dataType: "html",
+      data: formData,
+      //necesario para subir archivos via ajax
+      cache: false,
+      contentType: false,
+      processData: false,
+      beforeSend: function(objeto) {
+        $("#resultados").html("Enviando...")
+      },
+      success: function(datos) {
+        $("#resultados").html(datos)
+        $('#guardar_datos').attr("disabled", false);
+        location.reload();
+      }
+    });
+  });
+</script>
 
 <!--Cierre de ventana-->
 </div>

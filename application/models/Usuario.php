@@ -35,6 +35,15 @@
           return false;//cuando NO hay usuarios
         }
       }
+      public function consultarPorEmail($email){
+        $this->db->where("correo_usuario",$email);
+        $usuario=$this->db->get("usuario");
+        if($usuario->num_rows()>0){
+          return true;//cuando SI hay usuarios
+        }else{
+          return false;//cuando NO hay usuarios
+        }
+      }
       //funcion para consultar todos los usuarios
       public function consultarTodos(){
         $this->db->join('sector','sector.id_sector=usuario.fk_id_sector');
@@ -87,4 +96,3 @@
 
 
    //
- ?>
