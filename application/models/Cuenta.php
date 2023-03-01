@@ -33,6 +33,7 @@ class Cuenta extends CI_Model
   //Consultar cliente repetido
   public function consultarCuentaRepetida($numero_cuenta)
   {
+    $numero_cuenta = trim($numero_cuenta);
     $this->db->where("numero_cuenta", $numero_cuenta);
     $cliente = $this->db->get("cuenta");
     if ($cliente->num_rows() > 0) {
@@ -44,6 +45,7 @@ class Cuenta extends CI_Model
   //Consultar medidor repetido
   public function consultarMedidorRepetido($numero_medidor_cuenta)
   {
+    $numero_medidor_cuenta = trim($numero_medidor_cuenta);
     $this->db->where("numero_medidor_cuenta", $numero_medidor_cuenta);
     $cliente = $this->db->get("cuenta");
     if ($cliente->num_rows() > 0) {
