@@ -41,6 +41,17 @@ class Cuenta extends CI_Model
       return false; //cuando NO hay clientes
     }
   }
+  //Consultar medidor repetido
+  public function consultarMedidorRepetido($numero_medidor_cuenta)
+  {
+    $this->db->where("numero_medidor_cuenta", $numero_medidor_cuenta);
+    $cliente = $this->db->get("cuenta");
+    if ($cliente->num_rows() > 0) {
+      return true; //cuando SI hay clientes
+    } else {
+      return false; //cuando NO hay clientes
+    }
+  }
   //funcion para consultar todos lo cuentas
   public function consultarTodos()
   {

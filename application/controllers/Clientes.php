@@ -99,7 +99,7 @@ class Clientes extends CI_Controller
         $archivo = $this->simplexlsx1->generate($_FILES['matriz_clientes']['tmp_name']);
         $contador = 0;
         foreach ($archivo->rows() as $fields) {
-          if (!empty(trim($fields[0]))) {
+          if (!empty(trim($fields[0])) && !empty(trim($fields[2])) && !$this->cliente->consultarClienteRepetido($fields[2])) {
             $data_cliente['cedula_cliente'] = '';
             $data_cliente['nombre_cliente'] = '';
             $data_cliente['apellido_cliente'] = '';
@@ -116,6 +116,7 @@ class Clientes extends CI_Controller
               $bandera = false;
               if (!empty($fields[2])) {
                 $bandera = $this->cuenta->consultarCuentaRepetida($fields[2]);
+                $bandera = $this->cuenta->consultarMedidorRepetido($fields[7]);
               }
               //si $bandera es falso significa que no encontró clientes repetidos, entonces guarda el cliente
               if (!$bandera) {

@@ -91,6 +91,39 @@ class Usuario extends CI_Model
       return false;
     }
   }
+  // Consultar usuario repetido correo
+  public function consultarUsuarioRepetidoCorreo($correo_usuario)
+  {
+    $this->db->where("correo_usuario", $correo_usuario);
+    $usuario = $this->db->get("usuario");
+    if ($usuario->num_rows() > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // Consultar usuario repetido contraseña
+  public function consultarUsuarioRepetidoPassword($password_usuario)
+  {
+    $this->db->where("password_usuario", $password_usuario);
+    $usuario = $this->db->get("usuario");
+    if ($usuario->num_rows() > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // Consultar usuario repetido telefono
+  public function consultarUsuarioRepetidoTelefono($telefono_usuario)
+  {
+    $this->db->where("telefono_usuario", $telefono_usuario);
+    $usuario = $this->db->get("usuario");
+    if ($usuario->num_rows() > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   public function obtenerUsuariosPorEstado($estado)
   {

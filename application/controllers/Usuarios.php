@@ -159,7 +159,15 @@ class Usuarios extends CI_Controller
         $archivo = $this->simplexlsx1->generate($_FILES['matriz_usuarios']['tmp_name']);
         $contador = 0;
         foreach ($archivo->rows() as $fields) {
-          if (!empty(trim($fields[0]))) {
+          if (
+            !empty(trim($fields[0]))
+            && !empty(trim($fields[4]))
+            && !empty(trim($fields[5]))
+            && !empty(trim($fields[3]))
+            && !$this->usuario->consultarUsuarioRepetidoCorreo($fields[4])
+            && !$this->usuario->consultarUsuarioRepetidoPassword($fields[5])
+            && !$this->usuario->consultarUsuarioRepetidoTelefono($fields[3])
+          ) {
             $data_usuario['nombre_usuario'] = '';
             $data_usuario['apellido_usuario'] = '';
             $data_usuario['telefono_usuario'] = '';
