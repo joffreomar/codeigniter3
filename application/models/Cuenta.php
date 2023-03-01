@@ -57,7 +57,7 @@ class Cuenta extends CI_Model
   //funcion para consultar todos lo cuentas
   public function consultarTodos()
   {
-    $this->db->join('cliente', 'cliente.id_cliente=cuenta.fk_id_cliente');
+    $this->db->join('cliente', 'cuenta.fk_id_cliente=cliente.id_cliente',"LEFT");
     $this->db->join('sector', 'sector.id_sector=cuenta.fk_id_sector');
     $this->db->join('tpcuenta', 'tpcuenta.id_tpcuenta=cuenta.fk_id_tpcuenta');
     $listadoCuentas = $this->db->get("cuenta");
