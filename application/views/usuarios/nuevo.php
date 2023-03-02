@@ -33,7 +33,8 @@
         <label for="">
           <h6>Contraseña</h6>
         </label>
-        <input class="form-control" value="" onkeyup="checkPasswordStrength();" type="password" name="password_usuario" id="password_usuario" placeholder="INGRESE SU CONTRASEÑA">
+        <small id="helpId" class="text-muted"></small>
+        <input class="form-control" value="" type="password" name="password_usuario" id="password_usuario" placeholder="INGRESE SU CONTRASEÑA">
         <div id="password-strength-status"></div>
       </div>
       <div class="col-md-4">
@@ -103,6 +104,13 @@
     </form>
 
     <script type="text/javascript">
+      $.validator.addMethod("pwcheck", function(value) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%&])(.{6,20}$)/.test(value) // consists of only these
+          &&
+          /[a-z]/.test(value) // has a lowercase letter
+          &&
+          /\d/.test(value) // has a digit
+      });
       $("#frm_nuevo_usuario").validate({
         rules: {
           nombre_usuario: {
@@ -120,10 +128,29 @@
           },
           correo_usuario: {
             email: true,
-            required: true
+            required: true,
+            remote: {
+              url: "<?= base_url("index.php/usuarios/verificaremail") ?>",
+              type: "post",
+              data: {
+                correo_usuario: function() {
+                  return $('#correo_usuario').val().trim();
+                }
+              }
+            }
           },
           password_usuario: {
-            required: true
+            required: true,
+            remote: {
+              url: "<?= base_url("index.php/usuarios/verificarpass") ?>",
+              type: "post",
+              data: {
+                password_usuario: function() {
+                  return $('#password_usuario').val().trim();
+                }
+              }
+            },
+            pwcheck: true,
           },
           descripcion_usuario: {
             required: true
@@ -155,7 +182,8 @@
           },
           correo_usuario: {
             required: "Ingrese su correo",
-            email: "Email no valido utiliza un @ en el email"
+            email: "Email no valido utiliza un @ en el email",
+            remote: "El email ingresado ya se encuentra en uso"
           },
           telefono_usuario: {
             required: "Ingrese su telefono",
@@ -167,7 +195,9 @@
             required: "Ingrese la descripción"
           },
           password_usuario: {
-            required: "Ingrese su contraseña"
+            required: "Ingrese su contraseña",
+            remote: "La contraseña ya se encuentra en uso",
+            pwcheck: "La contraseña no cumple con el criterio de dureza (más de seis dígitos, que incluya letras, mayúsculas , números y símbolos (#$@..etc)).)",
           },
           tipo_usuario: {
             letras: "Seleccione una Opcion"
@@ -216,6 +246,7 @@
         }
       }
     </script>
+
     <!--Cierre de ventana-->
   </div>
 </div>

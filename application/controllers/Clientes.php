@@ -147,4 +147,52 @@ class Clientes extends CI_Controller
       echo "Error al guardar los datos";
     }
   }
+  public function verificarnumerocedula()
+  {
+    $data = $this->cliente->consultarClienteRepetido($_POST['cedula_cliente']);
+    $data = !$data;
+    if ($data) {
+      $data = $this->cedula($_POST['cedula_cliente']);
+    }
+
+    $this->output
+      ->set_content_type('application/json')
+      ->set_output(json_encode($data));
+  }
+  function cedula($cedula)
+  {
+    $sum = 0;
+    $sumi = 0;
+    for ($i = 0; $i < strlen($cedula) - 2; $i++) {
+      if ($i % 2 == 0) {
+        $sum += substr($cedula, $i + 1, 1);
+      }
+    }
+    $j = 0;
+    while ($j < strlen($cedula) - 1) {
+      $b = substr($cedula, $j, 1);
+      $b = $b * 2;
+      if ($b > 9) {
+        $b = $b - 9;
+      }
+      $sumi += $b;
+      $j = $j + 2;
+    }
+    $t = $sum + $sumi;
+    $res = 10 - $t % 10;
+    $aux = substr($cedula, 9, 9);
+    if ($res == $aux) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  public function verificaremail()
+  {
+    $data = $this->cliente->consultarClienteRepetidoCorreo($_POST['correo_cliente']);
+    $data = !$data;
+    $this->output
+      ->set_content_type('application/json')
+      ->set_output(json_encode($data));
+  }
 }//cierre de la clase

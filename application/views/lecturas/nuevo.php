@@ -205,12 +205,22 @@
       }
     </script>
     <script type="text/javascript">
+      $.validator.addMethod("restaCheck", function(value) {
+        var lectura_anterior =  $("#lectura_anterior_lectura").val()
+        var lectura_actual =  $("#lectura_actual_lectura").val()
+        if (lectura_actual<=lectura_anterior) {
+          return false
+        }else{
+          return true
+        }
+      });
       $("#frm_nuevo_lectura").validate({
         rules: {
           lectura_actual_lectura: {
             required: true,
             minlength: 4,
             maxlength: 4,
+            restaCheck:true
           },
           observación_lectura: {
             required: true
@@ -227,7 +237,8 @@
             required: "Ingrese su lectura",
             minlength: "La lectura debe tener mínimo 4 digitos",
             maxlength: "La lectura debe tener máximo 4 digitos",
-            digits: "La lectura solo acepta números"
+            digits: "La lectura solo acepta números",
+            restaCheck: "La lectura actual debe ser mayor a la anterior"
           },
           observacion_lectura: {
             required: "Ingrese la observación"

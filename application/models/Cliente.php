@@ -45,6 +45,16 @@ class Cliente extends CI_Model
       return false; //cuando NO hay clientes
     }
   }
+  public function consultarClienteRepetidoCorreo($correo_cliente)
+  {
+    $this->db->where("correo_cliente", $correo_cliente);
+    $cliente = $this->db->get("cliente");
+    if ($cliente->num_rows() > 0) {
+      return true; //cuando SI hay clientes
+    } else {
+      return false; //cuando NO hay clientes
+    }
+  }
   //funcion para consultar todos lo clientes
   public function consultarTodos()
   {

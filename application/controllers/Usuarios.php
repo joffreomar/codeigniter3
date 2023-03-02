@@ -209,4 +209,22 @@ class Usuarios extends CI_Controller
       echo "Error al guardar los datos";
     }
   }
+  // verificar si la contraseña está repetida 
+  public function verificarpass()
+  {
+    $data = $this->usuario->consultarUsuarioRepetidoPassword($_POST['password_usuario']);
+    $data = !$data;
+    $this->output
+      ->set_content_type('application/json')
+      ->set_output(json_encode($data));
+  }
+  // verificar si el correo está repetida 
+  public function verificaremail()
+  {
+    $data = $this->usuario->consultarUsuarioRepetidoCorreo($_POST['correo_usuario']);
+    $data = !$data;
+    $this->output
+      ->set_content_type('application/json')
+      ->set_output(json_encode($data));
+  }
 }//cierre de la clase
